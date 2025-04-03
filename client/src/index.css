@@ -1,10 +1,10 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
+@import "tailwindcss";
+@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  font-family: 'Open Sans', Helvetica, sans-serif;
+  font-family: "Open Sans", Helvetica, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -131,22 +131,26 @@
   }
 }
 
-.font-open-sans {
-  font-family: 'Open Sans', sans-serif;
-}
-
 html,
 body {
   overflow-x: hidden;
   font-family: inherit;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: "Funnel Sans", sans-serif;
+}
+
 h1 {
-  @apply text-4xl lg:text-5xl font-semibold;
+  @apply text-4xl font-semibold lg:text-5xl;
 }
 
 h2 {
-  @apply text-3xl lg:text-4xl font-semibold;
+  @apply text-3xl font-semibold lg:text-4xl;
 }
 h3 {
   @apply text-2xl lg:text-3xl;
