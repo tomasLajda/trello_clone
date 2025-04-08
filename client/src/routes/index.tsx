@@ -1,11 +1,21 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { useTheme } from "../components/theme-provider";
+
 import logo from "../assets/logo.png";
+import { ModeToggle } from "../components/mode-toggle";
 
 export const Route = createFileRoute("/")({
   component: Index,
 });
 
 function Index() {
+  const { setTheme } = useTheme();
+
+  useEffect(() => {
+    setTheme("light");
+  }, [setTheme]);
+
   return (
     <>
       <nav className="bg-secondary-foreground flex flex-row items-center justify-around">
@@ -15,6 +25,7 @@ function Index() {
           <Link to="/register" className="bg-primary h-full">
             Get Trello for free
           </Link>
+          <ModeToggle />
         </div>
       </nav>
     </>
