@@ -152,8 +152,13 @@ h1 {
 h2 {
   @apply text-3xl font-semibold lg:text-4xl;
 }
+
 h3 {
   @apply text-2xl lg:text-3xl;
+}
+
+h4 {
+  @apply text-xl lg:text-2xl;
 }
 
 p {
