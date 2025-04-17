@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -13,6 +13,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import illustration2 from "../assets/illustrations/illustration2.svg";
+import illustration3 from "../assets/illustrations/illustration3.svg";
 import logo from "../assets/logo.png";
 
 const formSchema = z
@@ -62,8 +64,8 @@ const Register = () => {
   }
 
   return (
-    <div className="flex h-screen items-center justify-center">
-      <div className="flex w-sm flex-col items-center rounded-sm bg-blue-50 p-10">
+    <div className="sm:bg-secondary relative flex h-screen items-center justify-center overflow-hidden bg-white">
+      <div className="flex w-sm flex-col items-center rounded-sm bg-white p-10 sm:shadow-2xl">
         <img src={logo} alt="" className="h-16" />
         <h4 className="mb-6 font-semibold">Sign up to continue</h4>
         <Form {...form}>
@@ -129,7 +131,20 @@ const Register = () => {
             </Button>
           </form>
         </Form>
+        <Link to="/login" className="text-primary mt-4">
+          Already registered?
+        </Link>
       </div>
+      <img
+        src={illustration2}
+        className="absolute hidden lg:-bottom-14 lg:-left-9 lg:block lg:w-sm"
+        alt="Illustration 2"
+      />
+      <img
+        src={illustration3}
+        className="absolute hidden lg:-right-16 lg:-bottom-14 lg:block lg:w-sm"
+        alt="Illustration 3"
+      />
     </div>
   );
 };
