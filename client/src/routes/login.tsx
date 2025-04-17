@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -13,6 +13,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import illustration2 from "../assets/illustrations/illustration2.svg";
+import illustration3 from "../assets/illustrations/illustration3.svg";
 import logo from "../assets/logo.png";
 
 const formSchema = z.object({
@@ -38,10 +40,10 @@ const Login = () => {
   }
 
   return (
-    <div className="flex h-screen items-center justify-center">
-      <div className="flex w-sm flex-col items-center rounded-sm bg-blue-50 p-10">
+    <div className="sm:bg-secondary relative flex h-screen items-center justify-center overflow-hidden bg-white">
+      <div className="flex w-sm flex-col items-center rounded-sm bg-white p-10 sm:shadow-2xl">
         <img src={logo} alt="" className="h-16" />
-        <h4 className="mb-6 font-semibold">Login</h4>
+        <h4 className="mb-6 font-semibold">Login to continue</h4>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -78,7 +80,26 @@ const Login = () => {
             </Button>
           </form>
         </Form>
+        <ul className="text-primary mt-4 flex gap-2">
+          <li>
+            <Link to="/register"> Can't log in?</Link>
+          </li>
+          <li className="text-black">•</li>
+          <li>
+            <Link to="/register">Create an account</Link>
+          </li>
+        </ul>
       </div>
+      <img
+        src={illustration2}
+        className="absolute hidden lg:-bottom-14 lg:-left-9 lg:block lg:w-sm"
+        alt="Illustration 2"
+      />
+      <img
+        src={illustration3}
+        className="absolute hidden lg:-right-16 lg:-bottom-14 lg:block lg:w-sm"
+        alt="Illustration 3"
+      />
     </div>
   );
 };
