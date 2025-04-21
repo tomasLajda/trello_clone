@@ -1,11 +1,14 @@
+import { authService } from "@/services/auth.service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { authService } from "../services/auth.service";
 
+import illustration2 from "@/assets/illustrations/illustration2.svg";
+import illustration3 from "@/assets/illustrations/illustration3.svg";
+import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,9 +20,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
-import illustration2 from "../assets/illustrations/illustration2.svg";
-import illustration3 from "../assets/illustrations/illustration3.svg";
-import logo from "../assets/logo.png";
+import { useTheme } from "../../components/theme-provider";
 
 const formSchema = z
   .object({
@@ -53,6 +54,7 @@ const formSchema = z
   });
 
 const Register = () => {
+  const { setTheme } = useTheme();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -90,6 +92,10 @@ const Register = () => {
 
     registerMutation.mutate(userData);
   };
+
+  useEffect(() => {
+    setTheme("light");
+  }, [setTheme]);
 
   useEffect(() => {
     if (authService.isLoggedIn()) {
@@ -191,6 +197,6 @@ const Register = () => {
   );
 };
 
-export const Route = createFileRoute("/register")({
+export const Route = createFileRoute("/_auth/register")({
   component: Register,
 });

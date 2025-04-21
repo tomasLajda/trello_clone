@@ -3,6 +3,9 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import illustration2 from "@/assets/illustrations/illustration2.svg";
+import illustration3 from "@/assets/illustrations/illustration3.svg";
+import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -13,13 +16,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { authService } from "@/services/auth.service";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import illustration2 from "../assets/illustrations/illustration2.svg";
-import illustration3 from "../assets/illustrations/illustration3.svg";
-import logo from "../assets/logo.png";
-import { authService } from "../services/auth.service";
+import { useTheme } from "../../components/theme-provider";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -31,6 +32,7 @@ const formSchema = z.object({
 });
 
 const Login = () => {
+  const { setTheme } = useTheme();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -60,6 +62,10 @@ const Login = () => {
 
     loginMutation.mutate(values);
   };
+
+  useEffect(() => {
+    setTheme("light");
+  }, [setTheme]);
 
   useEffect(() => {
     if (authService.isLoggedIn()) {
@@ -139,6 +145,6 @@ const Login = () => {
   );
 };
 
-export const Route = createFileRoute("/login")({
+export const Route = createFileRoute("/_auth/login")({
   component: Login,
 });
