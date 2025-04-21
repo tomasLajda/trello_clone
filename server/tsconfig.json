@@ -13,9 +13,8 @@
     },
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    /* Type Checking */
-    "strict": true /* Enable all strict type-checking options. */,
-    "skipLibCheck": true /* Skip type checking all .d.ts files. */
+    "strictPropertyInitialization": false,
+    "strict": true
   },
   "include": ["*/**/*.ts"],
   "exclude": ["node_modules", "dist"]
