@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from './user.entity.js';
 

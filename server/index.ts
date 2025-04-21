@@ -1,8 +1,8 @@
 import cors from 'cors';
 import 'dotenv/config';
 import express, { Request, Response } from 'express';
-import { appDataSource, roleRepository } from './models/data-source.js';
-import { Role, roles } from './models/role.entity.js';
+import { appDataSource, roleRepository } from './entities/data-source.js';
+import { Role, roles } from './entities/role.entity.js';
 import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
 
