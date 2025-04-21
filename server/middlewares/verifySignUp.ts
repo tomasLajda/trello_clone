@@ -1,8 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import db from '../models/index.js';
-
-const ROLES = db.ROLES;
-const User = db.user;
+import { userRepository } from '../entities/data-source.js';
+import { roles } from '../entities/role.entity.js';
 
 const checkDuplicateUsernameOrEmail = async (
   req: Request,
@@ -11,7 +9,10 @@ const checkDuplicateUsernameOrEmail = async (
 ) => {
   try {
     // Check if username exists
-    let user = await User.findOne({ where: { username: req.body.username } });
+    let user = await userRepository.findOne({
+      where: { username: req.body.username },
+    });
+
     if (user) {
       return res
         .status(400)
@@ -19,7 +20,8 @@ const checkDuplicateUsernameOrEmail = async (
     }
 
     // Check if email exists
-    user = await User.findOne({ where: { email: req.body.email } });
+    user = await userRepository.findOne({ where: { email: req.body.email } });
+
     if (user) {
       return res
         .status(400)
@@ -37,7 +39,7 @@ const checkDuplicateUsernameOrEmail = async (
 const checkRolesExisted = (req: Request, res: Response, next: NextFunction) => {
   if (req.body.roles) {
     for (const role of req.body.roles) {
-      if (!ROLES.includes(role)) {
+      if (!roles.includes(role)) {
         return res
           .status(400)
           .json({ message: `Failed! Role does not exist: ${role}` });

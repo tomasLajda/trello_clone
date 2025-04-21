@@ -1,14 +1,17 @@
 import cors from 'cors';
 import 'dotenv/config';
 import express, { Request, Response } from 'express';
-import db from './models/index.js';
+import { appDataSource, roleRepository } from './models/data-source.js';
+import { Role, roles } from './models/role.entity.js';
 import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
 
 const app = express();
+const PORT = process.env.PORT || 8080;
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'http://localhost:8081';
 
 const corsOptions = {
-  origin: 'http://localhost:8081',
+  origin: CLIENT_ORIGIN,
 };
 
 app.use(cors(corsOptions));
@@ -30,21 +33,30 @@ app.get('/', (req: Request, res: Response) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/test', userRoutes);
 
-// Set port, listen for requests
-const PORT = process.env.PORT || 8080;
-
 const initializeRoles = async () => {
-  const roles = ['user', 'moderator', 'admin'];
-  for (const role of roles) {
-    await db.role.findOrCreate({
-      where: { name: role },
-    });
+  for (const name of roles) {
+    const existingRole = await roleRepository.findOneBy({ name });
+
+    if (!existingRole) {
+      const role = new Role();
+      role.name = name;
+      await roleRepository.save(role);
+    }
   }
 };
 
-db.sequelize.sync().then(async () => {
-  await initializeRoles();
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}.`);
+appDataSource
+  .initialize()
+  .then(async () => {
+    console.log('Database initialized');
+
+    await initializeRoles();
+    // Start the Express server
+    app.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
+      console.log(`Accepting requests from origin: ${CLIENT_ORIGIN}`);
+    });
+  })
+  .catch((error) => {
+    console.log(error);
   });
-});

@@ -1,8 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import db from '../models/index.js';
-
-const User = db.user;
+import { userRepository } from '../entities/data-source.js';
 
 // Define custom request type to include userId
 interface CustomRequest extends Request {
@@ -39,14 +37,12 @@ const isAdmin = async (
       return res.status(403).json({ message: 'No user ID found!' });
     }
 
-    const user = await User.findByPk(req.userId);
+    const user = await userRepository.findOne({ where: { id: req.userId } });
     if (!user) {
       return res.status(404).json({ message: 'User not found!' });
     }
 
-    const roles = await user.getRoles();
-
-    for (const role of roles) {
+    for (const role of user.roles) {
       if (role.name === 'admin') {
         return next();
       }
@@ -70,14 +66,16 @@ const isModerator = async (
       return res.status(403).json({ message: 'No user ID found!' });
     }
 
-    const user = await User.findByPk(req.userId);
+    const user = await userRepository.findOne({
+      where: { id: req.userId },
+      relations: { roles: true },
+    });
+
     if (!user) {
       return res.status(404).json({ message: 'User not found!' });
     }
 
-    const roles = await user.getRoles();
-
-    for (const role of roles) {
+    for (const role of user.roles) {
       if (role.name === 'moderator') {
         return next();
       }
@@ -101,14 +99,16 @@ const isModeratorOrAdmin = async (
       return res.status(403).json({ message: 'No user ID found!' });
     }
 
-    const user = await User.findByPk(req.userId);
+    const user = await userRepository.findOne({
+      where: { id: req.userId },
+      relations: { roles: true },
+    });
+
     if (!user) {
       return res.status(404).json({ message: 'User not found!' });
     }
 
-    const roles = await user.getRoles();
-
-    for (const role of roles) {
+    for (const role of user.roles) {
       if (role.name === 'moderator' || role.name === 'admin') {
         return next();
       }
