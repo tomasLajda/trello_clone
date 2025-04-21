@@ -8,11 +8,7 @@ import { IndexTabList } from "../components/index-tab/index-tab-list";
 import { Button } from "../components/ui/button";
 import { authService } from "../services/auth.service";
 
-export const Route = createFileRoute("/")({
-  component: Index,
-});
-
-function Index() {
+const Index = () => {
   const { setTheme } = useTheme();
   const navigate = useNavigate();
 
@@ -111,4 +107,8 @@ function Index() {
       </footer>
     </>
   );
-}
+};
+
+export const Route = createFileRoute("/")({
+  component: Index,
+});
