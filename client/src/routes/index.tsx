@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useTheme } from "../components/theme-provider";
 
@@ -6,6 +6,7 @@ import icon from "../assets/icon.svg";
 import illustration5 from "../assets/illustrations/illustration5.svg";
 import { IndexTabList } from "../components/index-tab/index-tab-list";
 import { Button } from "../components/ui/button";
+import { authService } from "../services/auth.service";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -13,10 +14,17 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const { setTheme } = useTheme();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setTheme("light");
   }, [setTheme]);
+
+  useEffect(() => {
+    if (authService.isLoggedIn()) {
+      navigate({ to: "/dashboard" });
+    }
+  }, [navigate]);
 
   return (
     <>
