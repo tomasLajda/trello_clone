@@ -1,7 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMutation } from "@tanstack/react-query";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
+import { authService } from "../services/auth.service";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useEffect, useState } from "react";
 import illustration2 from "../assets/illustrations/illustration2.svg";
 import illustration3 from "../assets/illustrations/illustration3.svg";
 import logo from "../assets/logo.png";
@@ -49,6 +53,9 @@ const formSchema = z
   });
 
 const Register = () => {
+  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -59,9 +66,36 @@ const Register = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
+  const registerMutation = useMutation({
+    mutationFn: authService.register,
+    onSuccess: () => {
+      toast.success("Registration successful! Please log in.");
+      navigate({ to: "/login" });
+    },
+
+    onError: (error: Error) => {
+      toast.error(error.message || "Registration failed. Please try again.");
+      setIsSubmitting(false);
+    },
+  });
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    setIsSubmitting(true);
+
+    const userData = {
+      username: values.username,
+      email: values.email,
+      password: values.password,
+    };
+
+    registerMutation.mutate(userData);
+  };
+
+  useEffect(() => {
+    if (authService.isLoggedIn()) {
+      navigate({ to: "/dashboard" });
+    }
+  }, [navigate]);
 
   return (
     <div className="sm:bg-secondary relative flex h-screen items-center justify-center overflow-hidden bg-white">
@@ -107,7 +141,11 @@ const Register = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="" {...field} />
+                    <Input
+                      placeholder="Enter password"
+                      {...field}
+                      type="password"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -120,14 +158,18 @@ const Register = () => {
                 <FormItem>
                   <FormLabel>Repeat Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="" {...field} />
+                    <Input
+                      placeholder="Repeat password"
+                      {...field}
+                      type="password"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full">
-              Submit
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? "Signing up..." : "Sign Up"}
             </Button>
           </form>
         </Form>

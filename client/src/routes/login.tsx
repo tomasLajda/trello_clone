@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -13,9 +13,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useMutation } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import illustration2 from "../assets/illustrations/illustration2.svg";
 import illustration3 from "../assets/illustrations/illustration3.svg";
 import logo from "../assets/logo.png";
+import { authService } from "../services/auth.service";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -27,6 +31,9 @@ const formSchema = z.object({
 });
 
 const Login = () => {
+  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -35,9 +42,30 @@ const Login = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
+  const loginMutation = useMutation({
+    mutationFn: authService.login,
+    onSuccess: () => {
+      toast.success("Successfully logged in!");
+      navigate({ to: "/dashboard" });
+    },
+
+    onError: (error: Error) => {
+      toast.error(error.message || "Log in failed, try again!");
+      setIsSubmitting(false);
+    },
+  });
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    setIsSubmitting(true);
+
+    loginMutation.mutate(values);
+  };
+
+  useEffect(() => {
+    if (authService.isLoggedIn()) {
+      navigate({ to: "/dashboard" });
+    }
+  }, [navigate]);
 
   return (
     <div className="sm:bg-secondary relative flex h-screen items-center justify-center overflow-hidden bg-white">
@@ -56,7 +84,10 @@ const Login = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="example@example.com" {...field} />
+                    <Input
+                      placeholder="tywin.lannister@castamere.com"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -69,14 +100,18 @@ const Login = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="" {...field} />
+                    <Input
+                      placeholder="Enter password"
+                      {...field}
+                      type="password"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full">
-              Submit
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? "Logging In..." : "Log In"}
             </Button>
           </form>
         </Form>
